@@ -217,7 +217,7 @@
             if (statusLoading) statusLoading.style.display = 'flex';
             
             // Set QR image and text
-            qrImg.src = `https://vietqr.app/img?bank=ACB&acc=22177727&template=compact&showinfo=true&holder=NGUYEN%20THI%20HANH&amount=19000&addInfo=${orderId}`;
+            qrImg.src = `https://img.vietqr.io/image/ACB-22177727-compact2.png?amount=19000&addInfo=${orderId}&accountName=NGUYEN%20THI%20HANH`;
             orderIdText.textContent = orderId;
             
             // Show modal
