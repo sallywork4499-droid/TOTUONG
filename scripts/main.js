@@ -189,7 +189,7 @@
         formData.append('amount', amount);
 
         // Send data
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx4KR3XYqL-KxLkL_bM692kLVvQrldYlrC8qNjgJQ3I48hOSZGAR8m3D7RX4Yu6JmiKRg/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwp22eAJPXmsVFRX_Ze60MrgXR9NIJFD9UEX-V6Uc4xWK-tJjD8p4RFyqMbaZIApxgahQ/exec';
         
         fetch(scriptURL, {
             method: 'POST',
