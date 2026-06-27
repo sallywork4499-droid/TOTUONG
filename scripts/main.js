@@ -150,6 +150,7 @@
         const phone = document.getElementById('f-phone')?.value.trim();
         const date  = document.getElementById('f-date')?.value;
         const time  = document.getElementById('f-time')?.value;
+        const email = document.getElementById('f-email')?.value.trim();
 
         // Simple validation
         if (!name || !phone || !date || !time) {
@@ -164,36 +165,64 @@
             return;
         }
 
-        // Construct Zalo message
         const people = document.getElementById('f-people')?.value.trim();
         const note   = document.getElementById('f-note')?.value.trim();
 
-        const msg = encodeURIComponent(
-            `Xin chào shop Tô Tượng Ngọc Hồi! Tôi là ${name}, muốn đặt bàn:\n` +
-            `📅 Ngày: ${formatDate(date)}\n` +
-            `⏰ Giờ: ${time}\n` +
-            (people ? `👥 Số người: ${people}\n` : '') +
-            (note   ? `📝 Ghi chú: ${note}\n`    : '') +
-            `📞 SĐT: ${phone}`
-        );
-
-        // Show success + open Zalo
-        submitBtn.textContent = '✓ Đã gửi!';
+        // Show loading state
+        submitBtn.textContent = 'Đang gửi...';
         submitBtn.disabled    = true;
-        formSuccess.style.display = 'block';
 
-        // Attempt to open Zalo with pre-filled message
-        setTimeout(() => {
-            window.open(`https://zalo.me/0344499453?message=${msg}`, '_blank');
-        }, 600);
+        // Prepare data for Google Apps Script
+        const formData = new URLSearchParams();
+        formData.append('name', name);
+        formData.append('phone', phone);
+        formData.append('date', date);
+        formData.append('time', time);
+        formData.append('email', email || '');
+        formData.append('people', people || '');
+        formData.append('note', note || '');
 
-        // Reset after a delay
-        setTimeout(() => {
-            bookingForm.reset();
+        // Send data
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx4KR3XYqL-KxLkL_bM692kLVvQrldYlrC8qNjgJQ3I48hOSZGAR8m3D7RX4Yu6JmiKRg/exec';
+        
+        fetch(scriptURL, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            // Show success
+            submitBtn.textContent = '✓ Đã gửi!';
+            formSuccess.style.display = 'block';
+
+            // Construct Zalo message
+            const msg = encodeURIComponent(
+                `Xin chào shop Tô Tượng Ngọc Hồi! Tôi là ${name}, muốn đặt bàn:\n` +
+                `📅 Ngày: ${formatDate(date)}\n` +
+                `⏰ Giờ: ${time}\n` +
+                (people ? `👥 Số người: ${people}\n` : '') +
+                (note   ? `📝 Ghi chú: ${note}\n`    : '') +
+                `📞 SĐT: ${phone}`
+            );
+
+            // Attempt to open Zalo with pre-filled message
+            setTimeout(() => {
+                window.open(`https://zalo.me/0344499453?message=${msg}`, '_blank');
+            }, 600);
+
+            // Reset after a delay
+            setTimeout(() => {
+                bookingForm.reset();
+                submitBtn.textContent = 'Gửi thông tin đặt chỗ →';
+                submitBtn.disabled    = false;
+                formSuccess.style.display = 'none';
+            }, 8000);
+        })
+        .catch(error => {
+            console.error('Error!', error.message);
             submitBtn.textContent = 'Gửi thông tin đặt chỗ →';
             submitBtn.disabled    = false;
-            formSuccess.style.display = 'none';
-        }, 8000);
+            alert('Có lỗi xảy ra khi gửi thông tin. Vui lòng thử lại hoặc gọi trực tiếp!');
+        });
     });
 
     function isValidPhone(p) {
