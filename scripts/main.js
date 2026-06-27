@@ -196,33 +196,57 @@
             body: formData
         })
         .then(response => {
-            // Show success
-            submitBtn.textContent = '✓ Đã gửi!';
-            formSuccess.style.display = 'block';
+            // Restore button state
+            submitBtn.textContent = 'Gửi thông tin đặt chỗ →';
+            submitBtn.disabled    = false;
+            
+            // Elements
+            const paymentModal = document.getElementById('payment-modal');
+            const qrImg = document.getElementById('payment-qr-img');
+            const orderIdText = document.getElementById('payment-order-id');
+            const btnConfirm = document.getElementById('btn-confirm-payment');
+            const step1 = document.getElementById('payment-step-1');
+            const step2 = document.getElementById('payment-step-2');
+            const statusLoading = document.getElementById('payment-status-loading');
+            const btnClose = document.getElementById('payment-close');
 
-            // Construct Zalo message
-            const msg = encodeURIComponent(
-                `Xin chào shop Tô Tượng Ngọc Hồi! Tôi là ${name}, muốn đặt bàn:\n` +
-                `📦 Mã đơn hàng: ${orderId}\n` +
-                `📅 Ngày: ${formatDate(date)}\n` +
-                `⏰ Giờ: ${time}\n` +
-                (people ? `👥 Số người: ${people}\n` : '') +
-                (note   ? `📝 Ghi chú: ${note}\n`    : '') +
-                `📞 SĐT: ${phone}`
-            );
+            // Reset modal state
+            step1.style.display = 'block';
+            step2.style.display = 'none';
+            btnConfirm.style.display = 'none';
+            if (statusLoading) statusLoading.style.display = 'flex';
+            
+            // Set QR image and text
+            qrImg.src = `https://vietqr.app/img?bank=ACB&acc=22177727&template=compact&showinfo=true&holder=NGUYEN%20THI%20HANH&amount=19000&addInfo=${orderId}`;
+            orderIdText.textContent = orderId;
+            
+            // Show modal
+            paymentModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
 
-            // Attempt to open Zalo with pre-filled message
+            // Show confirm button after 30s
             setTimeout(() => {
-                window.open(`https://zalo.me/0344499453?message=${msg}`, '_blank');
-            }, 600);
+                if (btnConfirm) btnConfirm.style.display = 'block';
+                if (statusLoading) statusLoading.style.display = 'none';
+            }, 30000);
 
-            // Reset after a delay
-            setTimeout(() => {
+            // Handle confirm click
+            btnConfirm.onclick = () => {
+                step1.style.display = 'none';
+                step2.style.display = 'block';
+            };
+
+            // Handle close
+            const closeModal = () => {
+                paymentModal.classList.remove('active');
+                document.body.style.overflow = '';
                 bookingForm.reset();
-                submitBtn.textContent = 'Gửi thông tin đặt chỗ →';
-                submitBtn.disabled    = false;
-                formSuccess.style.display = 'none';
-            }, 8000);
+            };
+
+            btnClose.onclick = closeModal;
+            paymentModal.onclick = (e) => {
+                if (e.target === paymentModal) closeModal();
+            };
         })
         .catch(error => {
             console.error('Error!', error.message);

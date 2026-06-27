@@ -610,6 +610,51 @@
         </div>
     </footer>
 
+    <!-- ====== PAYMENT POPUP ====== -->
+    <div id="payment-modal" class="payment-modal">
+        <div class="payment-modal-content">
+            <button class="payment-close" id="payment-close">&times;</button>
+            
+            <!-- Bước 1: Quét QR -->
+            <div id="payment-step-1">
+                <h2>Thanh toán để hoàn tất đặt chỗ</h2>
+                <p class="payment-subtitle">Quét mã QR dưới đây bằng ứng dụng ngân hàng của bạn.</p>
+                
+                <div class="qr-container">
+                    <img id="payment-qr-img" src="" alt="Mã QR thanh toán">
+                </div>
+                
+                <div class="payment-details">
+                    <p><strong>Số tiền:</strong> <span class="price-highlight">19.000đ</span></p>
+                    <p><strong>Nội dung:</strong> <span id="payment-order-id" class="order-id-text"></span></p>
+                </div>
+                
+                <div class="payment-status" id="payment-status-loading">
+                    <div class="spinner"></div>
+                    <p>Đang chờ thanh toán...</p>
+                </div>
+                
+                <button id="btn-confirm-payment" class="btn btn-primary btn-full" style="display: none; margin-top: 15px;">
+                    Tôi đã chuyển khoản
+                </button>
+            </div>
+            
+            <!-- Bước 2: Thành công & Group Zalo -->
+            <div id="payment-step-2" style="display: none;" class="text-center">
+                <div class="success-icon-large">✅</div>
+                <h2>Gửi thông tin thành công!</h2>
+                <p>Cảm ơn bạn đã đặt chỗ. Tụi mình sẽ kiểm tra giao dịch và giữ bàn cho bạn.</p>
+                <div class="zalo-group-box">
+                    <p>👉 Hãy tham gia Group Zalo của shop để nhận hướng dẫn đường đi và các ưu đãi bí mật nhé!</p>
+                    <a href="https://zalo.me/g/sdczb5ehiqm9tyimg1th" target="_blank" class="btn btn-zalo btn-full" style="justify-content: center;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" width="22" height="22" alt="Zalo">
+                        Tham gia Group Zalo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ====== FLOATING BUTTONS ====== -->
     <div class="floating-actions">
         <a href="https://zalo.me/0344499453" target="_blank" class="fab fab-zalo" aria-label="Chat Zalo">
