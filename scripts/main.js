@@ -224,20 +224,43 @@
             paymentModal.classList.add('active');
             document.body.style.overflow = 'hidden';
 
-            // Show confirm button after 30s
-            setTimeout(() => {
-                if (btnConfirm) btnConfirm.style.display = 'block';
-                if (statusLoading) statusLoading.style.display = 'none';
-            }, 30000);
-
-            // Handle confirm click
-            btnConfirm.onclick = () => {
+            // ---- Auto-polling: check payment status every 4 seconds ----
+            let pollInterval = null;
+            
+            const switchToSuccess = () => {
+                if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
                 step1.style.display = 'none';
                 step2.style.display = 'block';
             };
 
+            const startPolling = () => {
+                pollInterval = setInterval(() => {
+                    fetch(`${scriptURL}?orderId=${orderId}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data && data.payment === 'PAID') {
+                                switchToSuccess();
+                            }
+                        })
+                        .catch(() => {}); // Bỏ qua lỗi mạng, thử lại sau
+                }, 4000);
+            };
+            startPolling();
+
+            // Show manual confirm button after 30s as fallback
+            setTimeout(() => {
+                if (pollInterval) { // Chỉ hiện nếu chưa PAID
+                    if (btnConfirm) btnConfirm.style.display = 'block';
+                    if (statusLoading) statusLoading.style.display = 'none';
+                }
+            }, 30000);
+
+            // Handle manual confirm click
+            btnConfirm.onclick = () => switchToSuccess();
+
             // Handle close
             const closeModal = () => {
+                if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
                 paymentModal.classList.remove('active');
                 document.body.style.overflow = '';
                 bookingForm.reset();
