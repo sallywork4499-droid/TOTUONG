@@ -168,6 +168,10 @@
         const people = document.getElementById('f-people')?.value.trim();
         const note   = document.getElementById('f-note')?.value.trim();
 
+        // Generate Order ID and Amount
+        const orderId = 'TT' + Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
+        const amount = '19.000đ';
+
         // Show loading state
         submitBtn.textContent = 'Đang gửi...';
         submitBtn.disabled    = true;
@@ -181,6 +185,8 @@
         formData.append('email', email || '');
         formData.append('people', people || '');
         formData.append('note', note || '');
+        formData.append('orderId', orderId);
+        formData.append('amount', amount);
 
         // Send data
         const scriptURL = 'https://script.google.com/macros/s/AKfycbx4KR3XYqL-KxLkL_bM692kLVvQrldYlrC8qNjgJQ3I48hOSZGAR8m3D7RX4Yu6JmiKRg/exec';
@@ -197,6 +203,7 @@
             // Construct Zalo message
             const msg = encodeURIComponent(
                 `Xin chào shop Tô Tượng Ngọc Hồi! Tôi là ${name}, muốn đặt bàn:\n` +
+                `📦 Mã đơn hàng: ${orderId}\n` +
                 `📅 Ngày: ${formatDate(date)}\n` +
                 `⏰ Giờ: ${time}\n` +
                 (people ? `👥 Số người: ${people}\n` : '') +
